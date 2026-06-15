@@ -118,7 +118,7 @@ Points are awarded based on the performance of the robot. In the first round, po
 ## Video
 ---
 
-Video of the robot on Youtube: [Video](https://youtu.be/vqMiVIuP070)
+Video of the robot on Youtube: [Video](INSERT LINK)
 
 [Back to table of contents](#table-of-contents)
 
@@ -131,23 +131,29 @@ The robot operates with multiple motors and sensors which will be showcased here
 ----
 The robot uses motors for drving and steering, these components work together to ensure the robot has a smooth and efficient movement.
 
-![image](https://github.com/user-attachments/assets/fbd40ed2-1a61-49ba-8580-67152f42db4c) 
+<img width="2000" height="2000" alt="image" src="https://github.com/user-attachments/assets/01dc2d8e-d34d-4b76-b05e-223f4daa5682" />
 
-|  Voltage |   Current  |   rpm    |  Torque  |
-|----------|------------|----------|----------|
-|    3     |    160     |   120    |   0.45   |
-|    6     |    220     |   200    |    1.0   |
-|   7.2    |    250     |   250    |    1.5   |
 
-We chose this motor because it was viable and the one we had already, other motors we used didn't hold up or didn't have enough power to move the wheels. Although there are way better motors we could've bought, we chose this one for its dual motor and it didn't need a driving axle. This made the building process a bit easier and less complicated.
+|  Voltage |   Rated Current   |   Stall Current    |    Total Length    |  Gearbox Size  |  Weight  |
+|----------|-----------------|------------------|--------------|------------------|-----------------|
+|  6V~12V |   0.04 A   |        0.67 A       |   34mm   | 15mm x 12mm x 10mm (LxWxH)|  10g  |
+
+The GA12-N20 motor is a solid option for robots because it offers an excellent balance of compact size, torque, efficiency, and affordability. Its built-in gearbox allows the small motor to produce enough force to move robots much heavier than its size would suggest.
+
+|  RPM |  Torque MAX (Kg.mm) |  Torque STALLED (Kg.mm) |
+|----------|------------|----------|
+|    6V@100     |    3.4      |   17    |
+|    12V@200      |         |       |
+|    6V@200     |    1.9     |   9.4   |
+|    12V@400      |         |       |
+|    6V@450     |    1.2     |   5.4    |
+|    12V@900      |    220     |   200    |
+
 
 The motor works by converting electrical energy into mechanical energy, specifically rotational motion, through the interaction of magnetic fields. It uses the principle that a current-carrying conductor experiences a force within a magnetic field. This force causes a rotor to spin, which then drives a shaft, producing mechanical work. This is then connected to the wheels with two jammed axles.
 
-To connect the motor to the skeleton, we made an opening in the skeleton to fit the motor inside, then we held it up with a bent metal sheet and some screws.
+To connect the motor to the skeleton, we made an opening in the skeleton to fit the motor inside, then we held it up with a 3D printed piece directly attached to the car with screws.
 
-![image](https://github.com/user-attachments/assets/bd00b6b5-922a-49a0-bb43-03d6022214f9)
-
-The design could be perfected if the skeleton was made to scale with the motor or we had chosen a different motor that not only satisfies what the robot needs but also that it fits confortably to the skeleton.
 
 <img width="592" height="346" alt="image" src="https://github.com/user-attachments/assets/2fe7c915-60aa-48d5-8ed1-5410b5651c7b" />
 
