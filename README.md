@@ -169,11 +169,18 @@ We experimented with many steering mechanisms but the one we found most success 
 ## Servo motor:
 ----
 
-![image](https://github.com/user-attachments/assets/c1188e64-4b96-4dbb-88fa-45dc8717d740) 
+<img width="1080" height="1040" alt="image" src="https://github.com/user-attachments/assets/742dd6ce-9630-4559-8d18-8a8d21dbb712" />
 
-|  Voltage |   Temperature   |   Angle of Rotation    |    Torque    |  Control signal  |  Type of Servo  |
-|----------|-----------------|------------------------|--------------|------------------|-----------------|
-|  3.3V~5V |   -30°C~+60°C   |          180           |   1.6KG/cm   |    PWM signal    |  Digital servo  |
+
+|  Weight |   13.4g   |
+|  Voltage |   4.8 V - 6.0 V   |
+|  Dimension |   22.5 x 12 x 35.5 mm   |
+|  Stall Torque (4.8V) |   1.8 kgf·cm   |
+|  Stall Torque (6V) |   2.2 kgf·cm   |
+|  Speed (4.8V) |   0.1s/60 degree   |
+|  Speed (6V) |   0.08s/60 degree   |
+|  Dead Band |   5µs  |
+
 
 For the motor we used the Steren servo motor, it's an okay motor but we chose it because it was the one we had in hand. Although it is a cheap motor, it works perfectly with the design of the robot. It also operates on low voltage (4.8–6V) and provides moderate torque for small mechanisms.
 
