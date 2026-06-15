@@ -147,7 +147,7 @@ The GA12-N20 motor is a solid option for robots because it offers an excellent b
 |    6V@200     |    1.9     |   9.4   |
 |    12V@400      |         |       |
 |    6V@450     |    1.2     |   5.4    |
-|    12V@900      |    220     |   200    |
+|    12V@900      |         |       |
 
 
 The motor works by converting electrical energy into mechanical energy, specifically rotational motion, through the interaction of magnetic fields. It uses the principle that a current-carrying conductor experiences a force within a magnetic field. This force causes a rotor to spin, which then drives a shaft, producing mechanical work. This is then connected to the wheels with two jammed axles.
@@ -161,9 +161,7 @@ To connect the motor to the skeleton, we made an opening in the skeleton to fit 
 
 ## Steering
 ----
-We experimented with many steering mechanisms but the one we found most success was anti-Ackerman steering. Other methods where either too big and complex or didn't turn the right amount. Anti-Ackerman systems are usually used on racing cars where the vehicles must turn at high speeds and the tires might slip, the outer tire’s increased steering angle helps compensate for these slip angles, maximizing grip during high-speed cornering. Even though with this robot we can't reach those speeds where the wheels start slipping, the anti-Ackerman system is still the most effective and simple for this competition.
-
-The steering system is composed of two identicar wheel holders connected with two steering axels, these two axels are then connected to the servo motor in the middle.
+We experimented with many steering mechanisms but the one we found most success was a belt and gear system. Last year we tried an Anti-Ackerman system which worked but not with the model we made. This year we desided to use a simpler belt and gear design that fit our car the best, although it's not as efficient as other systems like the Ackerman, this one still provides great steering angle and consistency.
 
 ![image](https://github.com/user-attachments/assets/c8e9e390-33da-499f-b02f-5bd69cfb3fcb)
 
