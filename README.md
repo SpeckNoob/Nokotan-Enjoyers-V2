@@ -1,4 +1,4 @@
-Mustangs Down
+Mustangs Mimic
 ====
 
 <p align="center">
@@ -36,7 +36,7 @@ Table of contents
 ## The Team
 ----
 
-Mark Chen, Age: 16
+Mark Chen, Age: 17
 
 ![image](https://github.com/user-attachments/assets/263bca30-1d4f-4f59-a675-890829c32520)
 
@@ -46,7 +46,7 @@ Hi!, I'm Mark from Panama with Chinese origin born in February 8 2009. I've been
 
 ----
 
-Juan Pablo Gomez, Age: 16
+Juan Pablo Gomez, Age: 17
 
 ![image](https://github.com/user-attachments/assets/b9244ac9-54e1-4af8-89d1-042ac478571a)
 
@@ -56,7 +56,7 @@ Hi, I'm Juan Pablo, from Colombia. I love robotics. I've been working with robot
 
 ----
 
-Julio Chong, Age: 16
+Julio Chong, Age: 17
 
 ![image](https://github.com/user-attachments/assets/39dfb391-f71d-4759-b822-fce67cd3f061)
 
@@ -66,13 +66,12 @@ My name is Julio Chong, a panamenian teen with chinese antescedents who was born
 
 ----
 
-Victor Sanchez (Coach), Age: 35
+Ivan Guerrero (Coach), Age: 27
 
-![image](https://github.com/user-attachments/assets/98a81bb6-1889-4778-b462-37a8654daace)
 
 School: Panamerican School of Panama, PAS
 
-Hello, I'm Victor Sanchez, robotics profesor with experience in educational programming with LEGO SPIKE in Panamerican School, I've led the robotics scholar proyect for 4 years with the goal of becoming national champion in Panama and solid at an international scale. I enjoy woodworking and playing videogames.
+
 
 ----
 
