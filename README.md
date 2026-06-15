@@ -171,8 +171,8 @@ We experimented with many steering mechanisms but the one we found most success 
 
 <img width="1080" height="1040" alt="image" src="https://github.com/user-attachments/assets/742dd6ce-9630-4559-8d18-8a8d21dbb712" />
 
-
 |  Weight |   13.4g   |
+| -------- |   --------  |
 |  Voltage |   4.8 V - 6.0 V   |
 |  Dimension |   22.5 x 12 x 35.5 mm   |
 |  Stall Torque (4.8V) |   1.8 kgf·cm   |
