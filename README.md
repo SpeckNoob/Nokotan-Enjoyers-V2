@@ -182,11 +182,11 @@ We experimented with many steering mechanisms but the one we found most success 
 |  Dead Band |   5µs  |
 
 
-For the motor we used the Steren servo motor, it's an okay motor but we chose it because it was the one we had in hand. Although it is a cheap motor, it works perfectly with the design of the robot. It also operates on low voltage (4.8–6V) and provides moderate torque for small mechanisms.
+The MG90S micro servo motor is a good choice for robots because it provides accurate and reliable position control in a compact, lightweight package. Its metal gears make it stronger and more durable than many other micro servos, allowing it to handle repeated movement and moderate loads without wearing out quickly.
 
 <img width="698" height="343" alt="image" src="https://github.com/user-attachments/assets/6ee0966f-861a-400f-babe-f5133c9d5492" />
 
-The motor is placed between both axels to form an anti-ackerman system
+The motor is placed on the top with the gear that moves the belt.
 
 ## Motherboard
 ----
