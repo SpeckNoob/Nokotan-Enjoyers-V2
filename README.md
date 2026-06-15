@@ -104,15 +104,15 @@ Points are awarded based on the performance of the robot. In the first round, po
 
 | Top | Bottom |
 |--------|---------|
-| ![WhatsApp Image 2025-09-29 at 17 31 00_9bd73e38](https://github.com/user-attachments/assets/5bc4cb0e-379e-4304-a0b0-bef6aa3a4356) |![WhatsApp Image 2025-09-29 at 17 31 00_5592dadc](https://github.com/user-attachments/assets/609a60ce-571a-4f1c-b92a-ff5e90b37dea) |
+| Insert Image | Insert Image |
 
 | Left | Right |
 |--------|---------|
-| ![WhatsApp Image 2025-09-29 at 17 31 00_614abe10](https://github.com/user-attachments/assets/febfba77-334b-451f-824c-3bbd20443457) |![WhatsApp Image 2025-09-29 at 17 31 00_24b984a5](https://github.com/user-attachments/assets/e625e5e9-3f4c-41dc-af76-11d5b5810f02) |
+| Insert Image  | Insert Image  |
 
 | Front | Back |
 |--------|---------|
-|![WhatsApp Image 2025-09-29 at 17 31 01_d4408ce1](https://github.com/user-attachments/assets/b6114bb8-6f59-48c5-8010-1a200a2ec1e8) |![WhatsApp Image 2025-09-29 at 17 31 01_3e9ea6a2](https://github.com/user-attachments/assets/9faf0389-60b7-4266-a0bf-94007f93429e) |
+| Insert Image  | Insert Image  |
 
 
 ## Video
