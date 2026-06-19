@@ -244,15 +244,67 @@ Dimentions:
 
 ## Ultrasonic Sensor
 ----
+This year`s robot we changed from laser based distance sensor to the normal ultrasonic sensor, this is because last year we  noticed that the black walls around the circuit were absorbing the laser, thus making very difficult to have precise information. This time we used 6 ultrasonic sensors to support our camera:s vision and prevent any minute detail, for example an insufficient turning angle, that could encounter our robot wich it could lead to it crash onto an obstacle. The position goes by: 1 on each side, 1 looking at angle of 45 degrees, 1 looking at angle of 135 degrees and finally 2 on the front of the car.
 
+Dimensions:
 
+Echo Output Signal Input TTL lever signal and the range in proportion
+
+Lenght: 45mm
+
+Width: 20mm 
+
+Height: 15mm
+
+|  Working Voltage |   Working Current   |  Working Frequency   |    Range    |  Measuring Angle  |  Trigger Input Signal  |
+|-----------|------------|----------------|--------------|------------------|-------|-------|
+|  DC 5V  |   15mA   |       40Hz      |   2cm-4m   |    15 degree    |  10µS TTL pulse  |
 
 [Back to table of contents](#table-of-contents)
 
 ## Gyroscope
 ----
 
+Gyroscope Features
 
+
+• Digital-output X-, Y-, and Z-Axis angular rate sensors (gyroscopes) with a
+user-programmable full-scale range of ±250, ±500, ±1000, and ±2000°/sec
+• External sync signal connected to the FSYNC pin supports image, video
+and GPS synchronization
+• Integrated 16-bit ADCs enable simultaneous sampling of gyros
+• Enhanced bias and sensitivity temperature stability reduces the need for
+user calibration
+• Improved low-frequency noise performance
+• Digitally-programmable low-pass filter
+• Gyroscope operating current: 3.6mA
+• Standby current: 5μA
+• Factory calibrated sensitivity scale factor
+• User self-test
+
+
+Accelerometer Features
+
+The triple-axis MEMS accelerometer in MPU-60X0 includes a wide range of
+features:
+• Digital-output triple-axis accelerometer with a programmable full scale
+range of ±2g, ±4g, ±8g and ±16g
+• Integrated 16-bit ADCs enable simultaneous sampling of accelerometers
+while requiring no external multiplexer
+• Accelerometer normal operating current: 500μA
+• Low power accelerometer mode current: 10μA at 1.25Hz, 20μA at 5Hz,
+60μA at 20Hz, 110μA at 40Hz
+• Orientation detection and signaling
+• Tap detection
+• User-programmable interrupts
+• High-G interrupt
+• User self-test
+
+Specs: 
+
+|  Working Voltage |   Working Current   |  Operating temperature range  |    Communication interface    |  G-Force tolerance  |  ADC Internal converter  |
+|-----------|------------|----------------|--------------|------------------|-------|-------|
+|  Operating input voltage |   4mA ( max.)   |       -40 to +105℃      |    I2C   |   10,000g (up to 0.2ms)   |  16bit (high precision)  |
 
 [Back to table of contents](#table-of-contents)
 
