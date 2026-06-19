@@ -6,7 +6,7 @@ Mustangs Mimic
 </p>
 
 
-This repository contains the documentation for the Mustangs Down team's robot for the 2025 World Robot Olympiad Future Engineers category competition. The robot was designed and built by a team of three.
+This repository contains the documentation for the Mustangs Mimic team's robot for the 2026 World Robot Olympiad Future Engineers category competition. The robot was designed and built by a team of three.
 
 Table of contents
 ----
