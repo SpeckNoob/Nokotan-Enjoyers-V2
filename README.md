@@ -246,6 +246,8 @@ Dimentions:
 ----
 This year`s robot we changed from laser based distance sensor to the HC-SR04 ultrasonic sensor , this is because last year we  noticed that the black walls around the circuit were absorbing the laser, thus making very difficult to have precise information. This time we used 6 ultrasonic sensors to support our camera:s vision and prevent any minute detail, for example an insufficient turning angle, that could encounter our robot wich it could lead to it crash onto an obstacle. The position goes by: 1 on each side, 1 looking at angle of 45 degrees, 1 looking at angle of 135 degrees and finally 2 on the front of the car.
 
+<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/9fc3dc68-5ad6-443c-904b-1b902a001cad" />
+
 Dimensions:
 
 Echo Output Signal Input TTL lever signal and the range in proportion
@@ -268,6 +270,9 @@ Height: 15mm
 ----
 
 This year`s robot we decided on using the GY-521 MPU-6050 to help the robot mantain an striaght position throught the circuit. THe MPU-6050 also help us measure the orientation and turns to let know our robot how much it have ben turning, for example measuring the real amount of turn and stop it when it reaches to 90 degrees.
+
+<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/a5f557f7-2aba-4975-8723-9899900cb17b" />
+
 
 Gyroscope Features
 
