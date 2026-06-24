@@ -132,6 +132,7 @@ The robot operates with multiple motors and sensors which will be showcased here
 ----
 The robot uses motors for drving and steering, these components work together to ensure the robot has a smooth and efficient movement.
 
+
 <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/01dc2d8e-d34d-4b76-b05e-223f4daa5682" />
 
 
