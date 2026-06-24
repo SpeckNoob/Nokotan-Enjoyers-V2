@@ -1,0 +1,218 @@
+#include <Wire.h>
+#include <VL53L1X.h>
+#include <ESP32Servo.h>
+#include "Arduino.h"
+
+// =================== Parámetros clave ===================
+#define ABS_OPEN_MM                 2300   // umbral “lado abierto” hacia ~3 m (ajusta 2100–2700)
+#define DELTA_OPEN_MM                600   // apertura relativa vs. línea base del lado fijo (500–800)
+#define TURN_MS                     2875   // giro con motor encendido (tu valor)
+#define LOOP_DELAY_MS                 10   // bucle rápido
+#define ARM_DELAY_MS                 100   // pequeña desensibilización tras cada giro
+#define START_IGNORE_MS              800   // ignorar lecturas grandes al iniciar (0.8 s)
+#define POST_FIRST_TURN_IGNORE_MS   1600   // ignorar lecturas grandes tras CADA giro (ajustable)
+// ========================================================
+
+// Multiplexores
+#define MUX_LEFT_ADDR  0x70
+#define MUX_RIGHT_ADDR 0x74
+#define MUX_CHANNEL_0  0
+
+// Sensores
+VL53L1X sensorLeft;
+VL53L1X sensorRight;
+
+// Servo
+#define SERVO_PIN     25
+#define SERVO_LEFT    10
+#define SERVO_CENTER  35
+#define SERVO_RIGHT   60
+Servo miServo;
+
+// Motor con shift register
+#define SHCP_PIN 18
+#define EN_PIN   16
+#define DATA_PIN 5
+#define STCP_PIN 17
+#define PWM1_PIN 19
+int M1_Forward = 128;
+
+// Estado y filtros
+int  contadorGiros     = 0;
+bool detenido          = false;
+enum Dir { NONE=0, LEFT=1, RIGHT=2 };
+Dir fixedDir           = NONE;
+
+float emaL=0, emaR=0; bool emaL_ok=false, emaR_ok=false;
+unsigned long lastTurnTS    = 0;         // para ARM_DELAY_MS
+unsigned long ignoreUntilTS = 0;         // ventana para ignorar lecturas grandes
+
+// ---------- Utilidades ----------
+static inline void selectOnlyOneMux(uint8_t muxAddr) {
+  Wire.beginTransmission(MUX_LEFT_ADDR);  Wire.write(0x00); Wire.endTransmission();
+  Wire.beginTransmission(MUX_RIGHT_ADDR); Wire.write(0x00); Wire.endTransmission();
+  Wire.beginTransmission(muxAddr);        Wire.write(1 << MUX_CHANNEL_0); Wire.endTransmission();
+  delayMicroseconds(500);
+}
+
+static inline void MoveForward() {
+  digitalWrite(EN_PIN, LOW);
+  digitalWrite(STCP_PIN, LOW);
+  shiftOut(DATA_PIN, SHCP_PIN, MSBFIRST, M1_Forward);
+  digitalWrite(STCP_PIN, HIGH);
+  digitalWrite(PWM1_PIN, HIGH);  // motor encendido
+}
+
+static inline void StopMotor() {
+  digitalWrite(PWM1_PIN, LOW);
+}
+
+static inline int readVL(VL53L1X &sensor, uint8_t muxAddr) {
+  selectOnlyOneMux(muxAddr);
+  int d = sensor.read();
+  return d > 0 ? d : 0;  // ignora inválidos
+}
+
+static inline void updEMA(float &ema, bool &ok, int x) {
+  if (x <= 0) return;
+  const float a = 0.20f;                 // EMA_ALPHA
+  if (!ok) { ema = x; ok = true; }
+  else      { ema = a*x + (1.0f - a)*ema; }
+}
+
+// ---------- Giros con motor encendido ----------
+void girarIzquierda() {
+  Serial.println("→ Giro IZQUIERDA (motor encendido)");
+  miServo.write(SERVO_LEFT);
+  MoveForward();
+  delay(TURN_MS);
+  miServo.write(SERVO_CENTER);
+  delay(80);
+  MoveForward();
+  contadorGiros++;
+  lastTurnTS = millis();
+  // Tras CADA giro: activar ventana de ignorar lecturas grandes
+  ignoreUntilTS = millis() + POST_FIRST_TURN_IGNORE_MS;
+}
+
+void girarDerecha() {
+  Serial.println("→ Giro DERECHA (motor encendido)");
+  miServo.write(SERVO_RIGHT);
+  MoveForward();
+  delay(TURN_MS);
+  miServo.write(SERVO_CENTER);
+  delay(80);
+  MoveForward();
+  contadorGiros++;
+  lastTurnTS = millis();
+  // Tras CADA giro: activar ventana de ignorar lecturas grandes
+  ignoreUntilTS = millis() + POST_FIRST_TURN_IGNORE_MS;
+}
+
+// ---------- Setup ----------
+void setup() {
+  Serial.begin(115200);
+  Wire.begin();
+
+  // Pines motor
+  pinMode(SHCP_PIN, OUTPUT);
+  pinMode(EN_PIN,  OUTPUT);
+  pinMode(DATA_PIN, OUTPUT);
+  pinMode(STCP_PIN, OUTPUT);
+  pinMode(PWM1_PIN, OUTPUT);
+
+  // Servo
+  miServo.setPeriodHertz(50);
+  miServo.attach(SERVO_PIN, 500, 2400);
+  miServo.write(SERVO_CENTER);
+
+  // ===== Sensores ToF: Long + 25 ms =====
+  selectOnlyOneMux(MUX_LEFT_ADDR);
+  sensorLeft.setTimeout(250);
+  sensorLeft.init();
+  sensorLeft.setDistanceMode(VL53L1X::Long);
+  sensorLeft.setMeasurementTimingBudget(25000);
+  sensorLeft.startContinuous(25);
+
+  selectOnlyOneMux(MUX_RIGHT_ADDR);
+  sensorRight.setTimeout(250);
+  sensorRight.init();
+  sensorRight.setDistanceMode(VL53L1X::Long);
+  sensorRight.setMeasurementTimingBudget(25000);
+  sensorRight.startContinuous(25);
+
+  // Ventana inicial: ignorar lecturas grandes por 0.8 s
+  ignoreUntilTS = millis() + START_IGNORE_MS;
+
+  Serial.println("Listo: dir fija, giro con motor, y ventanas de ignorar tras CADA giro.");
+}
+
+// ---------- Loop ----------
+void loop() {
+  if (detenido) return;
+
+  const unsigned long now = millis();
+  const bool ignoringLarge = (now < ignoreUntilTS);               // ventana activa
+  const bool armedTime     = (now - lastTurnTS) >= ARM_DELAY_MS;  // pequeño re-armado
+  const bool canTurn       = (!ignoringLarge) && armedTime;       // condición global
+
+  int dL = readVL(sensorLeft,  MUX_LEFT_ADDR);
+  int dR = readVL(sensorRight, MUX_RIGHT_ADDR);
+
+  // Actualiza líneas base
+  updEMA(emaL, emaL_ok, dL);
+  updEMA(emaR, emaR_ok, dR);
+
+  // Log útil
+  Serial.print("L: "); Serial.print(dL); Serial.print(" (EMA ");
+  Serial.print(emaL_ok ? (int)emaL : -1); Serial.print(") | R: ");
+  Serial.print(dR); Serial.print(" (EMA ");
+  Serial.print(emaR_ok ? (int)emaR : -1); Serial.print(") | IGNORING=");
+  Serial.println(ignoringLarge ? "YES" : "NO");
+
+  // Detección (abs/rel) condicionada por canTurn
+  bool leftAbs  = canTurn && (dL >= ABS_OPEN_MM);
+  bool rightAbs = canTurn && (dR >= ABS_OPEN_MM);
+  bool leftRel  = canTurn && (emaL_ok && (dL - emaL) >= DELTA_OPEN_MM);
+  bool rightRel = canTurn && (emaR_ok && (dR - emaR) >= DELTA_OPEN_MM);
+
+  // 1) Si aún no hay dirección fija: decide en el primer evento válido
+  if (fixedDir == NONE && canTurn) {
+    bool L = leftAbs  || leftRel;
+    bool R = rightAbs || rightRel;
+    if (L || R) {
+      if (L && R) fixedDir = (dL >= dR) ? LEFT : RIGHT;
+      else        fixedDir =  L ? LEFT : RIGHT;
+      Serial.print("Dirección FIJA: "); Serial.println(fixedDir == LEFT ? "IZQUIERDA" : "DERECHA");
+      if (fixedDir == LEFT)  girarIzquierda();
+      else                   girarDerecha();
+      return;
+    }
+  }
+  // 2) Con dirección fija: SOLO miramos ese lado y respetamos la ventana/armado
+  else if (canTurn) {
+    if (fixedDir == LEFT) {
+      if (leftAbs || leftRel) { girarIzquierda(); return; }
+    } else { // RIGHT
+      if (rightAbs || rightRel) { girarDerecha(); return; }
+    }
+  }
+
+  // Avanza recto si no se dispara el giro
+  MoveForward();
+
+  if (contadorGiros >= 12) {
+    Serial.println("✔ 12 giros completados. Avanzando y deteniendo...");
+    MoveForward();
+    delay(1000);
+    StopMotor();
+    miServo.write(SERVO_CENTER);
+    digitalWrite(STCP_PIN, LOW);
+    shiftOut(DATA_PIN, SHCP_PIN, MSBFIRST, 0x00);
+    digitalWrite(STCP_PIN, HIGH);
+    digitalWrite(PWM1_PIN, LOW);
+    detenido = true;
+  }
+
+  delay(LOOP_DELAY_MS);
+}
