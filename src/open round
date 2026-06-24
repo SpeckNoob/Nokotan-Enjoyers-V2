@@ -1,0 +1,164 @@
+#include <Wire.h> 
+#include <VL53L1X.h>
+#include <ESP32Servo.h>
+#include "Arduino.h"
+
+// Multiplexores
+#define MUX_LEFT_ADDR  0x70
+#define MUX_RIGHT_ADDR 0x74
+#define MUX_CHANNEL_0  0
+
+// Sensores
+VL53L1X sensorLeft;
+VL53L1X sensorRight;
+
+// Servo Steam
+#define SERVO_PIN 25
+#define SERVO_LEFT     15
+#define SERVO_CENTER   37
+#define SERVO_RIGHT    55
+Servo miServo;
+
+// Motor control con shift register
+#define SHCP_PIN 18
+#define EN_PIN   16
+#define DATA_PIN 5
+#define STCP_PIN 17
+#define PWM1_PIN 19
+int M1_Forward = 128;
+
+// Umbral: 100 cm
+#define OBSTACLE_THRESHOLD 1000
+
+// Control de tiempo
+#define TIEMPO_LIMITE_MS 67000  // 1 minuto, 7 segundos
+unsigned long tiempoInicio;
+bool detenido = false;
+
+void selectOnlyOneMux(uint8_t muxAddr) {
+  Wire.beginTransmission(MUX_LEFT_ADDR); Wire.write(0x00); Wire.endTransmission();
+  Wire.beginTransmission(MUX_RIGHT_ADDR); Wire.write(0x00); Wire.endTransmission();
+  Wire.beginTransmission(muxAddr); Wire.write(1 << MUX_CHANNEL_0); Wire.endTransmission();
+  delay(10);
+}
+
+void MoveForward() {
+  digitalWrite(EN_PIN, LOW);
+  digitalWrite(STCP_PIN, LOW);
+  shiftOut(DATA_PIN, SHCP_PIN, MSBFIRST, M1_Forward);
+  digitalWrite(STCP_PIN, HIGH);
+  digitalWrite(PWM1_PIN, HIGH);  // Encender PWM a tope
+}
+
+void StopMotor() {
+  digitalWrite(PWM1_PIN, LOW);  // Apagar PWM
+}
+
+void setup() {
+  Serial.begin(115200);
+  Wire.begin();
+
+  // Pines motor
+  pinMode(SHCP_PIN, OUTPUT);
+  pinMode(EN_PIN, OUTPUT);
+  pinMode(DATA_PIN, OUTPUT);
+  pinMode(STCP_PIN, OUTPUT);
+  pinMode(PWM1_PIN, OUTPUT);
+
+  // Servo
+  miServo.setPeriodHertz(50);
+  miServo.attach(SERVO_PIN, 500, 2400);
+  miServo.write(SERVO_CENTER);
+
+  // Sensor izquierdo
+  selectOnlyOneMux(MUX_LEFT_ADDR);
+  sensorLeft.setTimeout(500);
+  if (!sensorLeft.init()) {
+    Serial.println("Error: sensor izquierdo no detectado.");
+    while (1);
+  }
+  sensorLeft.setDistanceMode(VL53L1X::Long);
+  sensorLeft.setMeasurementTimingBudget(20000);
+  sensorLeft.startContinuous(20);
+
+  // Sensor derecho
+  selectOnlyOneMux(MUX_RIGHT_ADDR);
+  sensorRight.setTimeout(500);
+  if (!sensorRight.init()) {
+    Serial.println("Error: sensor derecho no detectado.");
+    while (1);
+  }
+  sensorRight.setDistanceMode(VL53L1X::Long);
+  sensorRight.setMeasurementTimingBudget(50000);
+  sensorRight.startContinuous(50);
+
+  Serial.println("Sistema listo.");
+
+  // Tiempo inicial
+  tiempoInicio = millis();
+}
+
+void loop() {
+  // Verificar si se superó el tiempo límite
+  if (!detenido && millis() - tiempoInicio >= TIEMPO_LIMITE_MS) {
+    Serial.println("Tiempo límite alcanzado. Deteniendo todo.");
+    StopMotor();
+    miServo.write(SERVO_CENTER);
+
+    // Asegura apagado del shift register
+    digitalWrite(STCP_PIN, LOW);
+    shiftOut(DATA_PIN, SHCP_PIN, MSBFIRST, 0x00);
+    digitalWrite(STCP_PIN, HIGH);
+    digitalWrite(PWM1_PIN, LOW);
+
+    detenido = true;
+    while (true);  // Detener completamente el programa
+  }
+
+  MoveForward();  // Siempre avanzando
+
+  // Leer sensor izquierdo
+  selectOnlyOneMux(MUX_LEFT_ADDR);
+  int distLeft = sensorLeft.read();
+  if (sensorLeft.timeoutOccurred()) {
+    Serial.println("Timeout sensor izquierdo");
+    distLeft = 0;
+  }
+
+  // Leer sensor derecho
+  selectOnlyOneMux(MUX_RIGHT_ADDR);
+  int distRight = sensorRight.read();
+  if (sensorRight.timeoutOccurred()) {
+    Serial.println("Timeout sensor derecho");
+    distRight = 0;
+  }
+
+  Serial.print("Izquierdo: "); Serial.print(distLeft);
+  Serial.print(" mm | Derecho: "); Serial.println(distRight);
+
+  // Reacción del servo con prioridad
+  if (distLeft > OBSTACLE_THRESHOLD) {
+    Serial.println("Distancia izquierda > 80 cm → girar a la izquierda");
+    
+    StopMotor();  // Prioriza el servo
+    delay(100);
+    miServo.write(SERVO_LEFT);
+    delay(2800);
+    miServo.write(SERVO_CENTER);
+    delay(200);
+    MoveForward();  // Reanuda motor
+  } 
+  else if (distRight > OBSTACLE_THRESHOLD) {
+    Serial.println("Distancia derecha > 80 cm → girar a la derecha");
+
+    StopMotor();
+    delay(100);
+    miServo.write(SERVO_RIGHT);
+    delay(2800);
+    miServo.write(SERVO_CENTER);
+    delay(200);
+    MoveForward();
+  }
+
+  delay(100);
+}
