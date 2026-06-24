@@ -132,7 +132,7 @@ The robot operates with multiple motors and sensors which will be showcased here
 ----
 The robot uses motors for drving and steering, these components work together to ensure the robot has a smooth and efficient movement.
 
-<img width="2000" height="2000" alt="image" src="https://github.com/user-attachments/assets/01dc2d8e-d34d-4b76-b05e-223f4daa5682" />
+<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/01dc2d8e-d34d-4b76-b05e-223f4daa5682" />
 
 
 |  Voltage |   Rated Current   |   Stall Current    |    Total Length    |  Gearbox Size  |  Weight  |
@@ -169,7 +169,9 @@ We experimented with many steering mechanisms but the one we found most success 
 ## Servo motor:
 ----
 
-<img width="1080" height="1040" alt="image" src="https://github.com/user-attachments/assets/742dd6ce-9630-4559-8d18-8a8d21dbb712" />
+The MG90S micro servo motor is a good choice for robots because it provides accurate and reliable position control in a compact, lightweight package. Its metal gears make it stronger and more durable than many other micro servos, allowing it to handle repeated movement and moderate loads without wearing out quickly.
+
+<img width="540" height="520" alt="image" src="https://github.com/user-attachments/assets/742dd6ce-9630-4559-8d18-8a8d21dbb712" />
 
 |  Weight |   13.4g   |
 | -------- |   --------  |
@@ -182,8 +184,6 @@ We experimented with many steering mechanisms but the one we found most success 
 |  Dead Band |   5µs  |
 
 
-The MG90S micro servo motor is a good choice for robots because it provides accurate and reliable position control in a compact, lightweight package. Its metal gears make it stronger and more durable than many other micro servos, allowing it to handle repeated movement and moderate loads without wearing out quickly.
-
 <img width="698" height="343" alt="image" src="https://github.com/user-attachments/assets/6ee0966f-861a-400f-babe-f5133c9d5492" />
 
 The motor is placed on the top with the gear that moves the belt.
@@ -191,13 +191,13 @@ The motor is placed on the top with the gear that moves the belt.
 ## Motherboard
 ----
 
-![image](https://github.com/user-attachments/assets/badc365a-1382-4089-88d6-2129cc35cae7)
+For motor driver, we chose the Acebott ESP32, it's capable of controling not only the motors but the sensors as well. It acts like a bridge between a microcontroller and motors, allowing us to safely control higher voltages and currents than the microcontroller can handle directly
+
+<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/74f393c7-eee0-491b-bebb-b23e10a49c08" />
 
 |     Chip     |   Clock   |   ROM   |  SRAM  |  FLASH  |        Interfaces        |  Input voltages  |
 |--------------|-----------|---------|--------|---------|--------------------------|------------------|
 | ESP-WROOM-32 |   240MHz  |  448KB  |  520KB |   4MB   |  UART , I2C , SPI , CAN  |      6-18V       |
-
-For motor driver, we chose the Acebott ESP32, it's capable of controling not only the motors but the sensors as well. It acts like a bridge between a microcontroller and motors, allowing us to safely control higher voltages and currents than the microcontroller can handle directly
 
 ## Skeleton/Chassis
 ----
@@ -217,7 +217,7 @@ We had an accident not long before the competition and the piece that holds the 
 
 We chose these batteries because they were small and easy to fit on the robot and they had good runtime compared to the lego spike brain. They also deliver higher electric outputs that could power the new motors we chose.
 
-![image](https://github.com/user-attachments/assets/71818d84-c5d1-4629-8518-718c7c04b7c8)
+<img width="531" height="582.25" alt="image" src="https://github.com/user-attachments/assets/1240b72d-c87d-4222-a23d-769625bcd671" />
 
 Model 18605
 
