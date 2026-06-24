@@ -1,0 +1,152 @@
+# OpenMV color detector for ESP32 robot
+# Sends: b"verde\n" or b"rojo\n" via UART(1) @ 115200
+# Shows live overlay (rectangles + labels) in the OpenMV IDE preview.
+
+from machine import UART
+import sensor, image, time
+from collections import deque
+
+# ------------- UART to ESP32 -------------
+# On most OpenMV boards, UART(1) uses P4/P5 (check your board silkscreen).
+uart = UART(1, baudrate=115200, timeout_char=100)
+
+# ------------- Camera setup -------------
+sensor.reset()
+sensor.set_pixformat(sensor.RGB565)          # color
+sensor.set_framesize(sensor.QVGA)            # 320x240 for speed
+sensor.set_auto_gain(False)                  # IMPORTANT: keep OFF for color thresholds
+sensor.set_auto_whitebal(False)              # IMPORTANT: keep OFF for color thresholds
+sensor.skip_frames(time=500)                 # small warmup so it starts almost immediately
+clock = time.clock()
+
+# ------------- Tuned LAB thresholds -------------
+# These ranges are robust against a white track (white has a~0, b~0; we push away from that).
+# Tweak here if your lighting is very different:
+# Tuple format: (Lmin, Lmax, Amin, Amax, Bmin, Bmax)
+RED_T   = (15, 85,   25, 127,  -10, 127)
+GREEN_T = (10, 85, -128, -20,   -10, 127)
+
+# ------------- Detection ROI -------------
+# We ignore borders and most of the floor to avoid noise.
+# ROI covers center 60% width and top 75% height (reduce masked area as you requested).
+def compute_roi(img):
+    w, h = img.width(), img.height()
+    roi_x = int(w * 0.20)
+    roi_y = 0
+    roi_w = int(w * 0.60)
+    roi_h = int(h * 0.75)
+    return (roi_x, roi_y, roi_w, roi_h)
+
+# ------------- Sensitivity & stability -------------
+PIXELS_THRESHOLD = 60     # lower -> more sensitive (min connected pixels)
+AREA_THRESHOLD   = 80     # lower -> more sensitive (min bounding box area)
+MIN_H_PX         = 10     # ignore tiny blobs by height
+REFRESH_MS       = 400    # resend color at least every 0.4s even if unchanged
+DEBOUNCE_N       = 5      # frames for majority vote
+DEBOUNCE_K       = 3      # need >= K of last N frames to accept a new label
+
+last_sent_label  = None
+last_send_time   = time.ticks_ms()
+history          = deque(maxlen=DEBOUNCE_N)
+
+# ------------- Optional: mild adaptive exposure (keeps colors readable) -------------
+# We make tiny adjustments without enabling full auto-gain/auto-WB (which would break color thresholds).
+def mild_exposure_nudge(img):
+    # Compute statistics in the ROI to judge brightness
+    roi = compute_roi(img)
+    stats = img.get_statistics(roi=roi)
+    # Luma proxy via mean of RGB565 is coarse; we use l_mean from LAB using .statistics() in RGB is not direct.
+    # Simple heuristic: if very dark, briefly allow auto gain to catch up, then turn it off.
+    global auto_gain_counter
+    l_estimate = (stats.mean())  # 0..255 rough
+    if l_estimate < 55:
+        sensor.set_auto_gain(True)
+    else:
+        sensor.set_auto_gain(False)
+
+# ------------- Pick the "closest" blob -------------
+# We use the smallest y (higher on the image) as "closer" in your usage
+def pick_blob(blobs):
+    if not blobs:
+        return None
+    return min(blobs, key=lambda b: b.y())
+
+def label_from_frame(img):
+    roi = compute_roi(img)
+
+    rojos = img.find_blobs([RED_T], pixels_threshold=PIXELS_THRESHOLD,
+                           area_threshold=AREA_THRESHOLD, merge=True, roi=roi)
+    verdes = img.find_blobs([GREEN_T], pixels_threshold=PIXELS_THRESHOLD,
+                            area_threshold=AREA_THRESHOLD, merge=True, roi=roi)
+
+    # Filter tiny blobs by height
+    rojos  = [b for b in rojos  if b.h() >= MIN_H_PX]
+    verdes = [b for b in verdes if b.h() >= MIN_H_PX]
+
+    br = pick_blob(rojos)
+    bg = pick_blob(verdes)
+
+    # Decide based on presence and vertical position
+    if br is None and bg is None:
+        return None, None
+    if br is not None and bg is None:
+        return "rojo", br
+    if br is None and bg is not None:
+        return "verde", bg
+
+    # Both present: choose the one with smaller y() (higher in the image)
+    if br.y() < bg.y():
+        return "rojo", br
+    else:
+        return "verde", bg
+
+def stable_vote_push(label):
+    history.append(label)
+    if history.count(label) >= DEBOUNCE_K:
+        return True
+    return False
+
+def maybe_send(label):
+    global last_sent_label, last_send_time
+    now = time.ticks_ms()
+    # Send if changed OR it's time to refresh
+    if (label != last_sent_label) or (time.ticks_diff(now, last_send_time) >= REFRESH_MS):
+        token = (label + "\n").encode()
+        uart.write(token)
+        print("TX:", label)  # also print to IDE serial
+        last_sent_label = label
+        last_send_time = now
+
+# ------------- Main loop -------------
+while True:
+    clock.tick()
+    img = sensor.snapshot()
+
+    # Mild exposure nudge to keep detection robust without ruining thresholds
+    mild_exposure_nudge(img)
+
+    # Detect
+    label, blob = label_from_frame(img)
+
+    # Draw ROI
+    rx, ry, rw, rh = compute_roi(img)
+    img.draw_rectangle(rx, ry, rw, rh, color=(200, 200, 200))  # light ROI box
+
+    if label is None:
+        # Draw hint text
+        img.draw_string(4, 4, "No color", color=(255, 255, 255), scale=1)
+        # Reset vote history on no color (optional): allows quicker switching
+        history.append(None)
+    else:
+        # Draw blob box + label
+        color_draw = (0, 255, 0) if label == "verde" else (255, 0, 0)
+        img.draw_rectangle(blob.rect(), color=color_draw, thickness=2)
+        img.draw_cross(blob.cx(), blob.cy(), color=color_draw, size=5)
+        img.draw_string(blob.x(), max(0, blob.y()-12), label, color=color_draw, scale=2)
+
+        # Stability (debounce) + send
+        if stable_vote_push(label):
+            maybe_send(label)
+
+    # Optional FPS overlay
+    img.draw_string(4, img.height()-12, "FPS: %0.1f" % clock.fps(), color=(255,255,255), scale=1)
