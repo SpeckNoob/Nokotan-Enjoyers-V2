@@ -156,11 +156,6 @@ The motor works by converting electrical energy into mechanical energy, specific
 To connect the motor to the skeleton, we made a piece that holds the motor in place and its directly attached to the main body with the use of screws.
 
 
-
-
-
-
-
 (Full model is in the "models" repository)
 
 ## Steering
