@@ -257,8 +257,10 @@ Width: 20mm
 Height: 15mm
 
 |  Working Voltage |   Working Current   |  Working Frequency   |    Range    |  Measuring Angle  |  Trigger Input Signal  |
-|-----------|------------|----------------|--------------|------------------|-------|-------|
-|  DC 5V  |   15mA   |       40Hz      |   2cm-4m   |    15 degree    |  10µS TTL pulse  |
+|-----------|------------|----------------|--------------|------------------|-------|
+|  DC 5V |   15mA   |      40Hz       |   2cm-4m  |    15 degree    |  10µS TTL pulse  |
+
+
 
 [Back to table of contents](#table-of-contents)
 
@@ -311,8 +313,8 @@ Widht: 16mm
 Height: 10mm
 
 |  Working Voltage |   Working Current   |  Operating temperature range  |    Communication interface    |  G-Force tolerance  |  ADC Internal converter  |
-|-----------|------------|----------------|--------------|------------------|-------|-------|
-|  Operating input voltage |   4mA ( max.)   |       -40 to +105℃      |    I2C   |   10,000g (up to 0.2ms)   |  16bit (high precision)  |
+|-----------|------------|----------------|--------------|------------------|-------|
+|  Operating input voltage | 4mA ( max.) | -40 to +105℃ | I2C | 10,000g (up to 0.2ms)   |  16bit (high precision)  |
 
 [Back to table of contents](#table-of-contents)
 
