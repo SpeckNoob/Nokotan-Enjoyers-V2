@@ -155,6 +155,7 @@ The motor works by converting electrical energy into mechanical energy, specific
 
 To connect the motor to the skeleton, we made a piece that holds the motor in place and its directly attached to the main body with the use of screws.
 
+<img width="400" height="600" alt="image" src="https://github.com/user-attachments/assets/16ea506e-7c31-4eee-9259-efbd8307ebd5" />
 
 (Full model is in the "models" repository)
 
@@ -162,7 +163,7 @@ To connect the motor to the skeleton, we made a piece that holds the motor in pl
 ----
 We experimented with many steering mechanisms but the one we found most success was a belt and gear system. Last year we tried an Anti-Ackerman system which worked but not with the model we made. This year we desided to use a simpler belt and gear design that fit our car the best, although it's not as efficient as other systems like the Ackerman, this one still provides great steering angle and consistency.
 
-![image](https://github.com/user-attachments/assets/c8e9e390-33da-499f-b02f-5bd69cfb3fcb)
+<img width="400" height="600" alt="image" src="https://github.com/user-attachments/assets/c652f65a-35a9-440e-bed3-84faa907cef4" />
 
 ## Servo motor:
 ----
@@ -181,8 +182,7 @@ The MG90S micro servo motor is a good choice for robots because it provides accu
 |  Speed (6V) |   0.08s/60 degree   |
 |  Dead Band |   5µs  |
 
-
-<img width="698" height="343" alt="image" src="https://github.com/user-attachments/assets/6ee0966f-861a-400f-babe-f5133c9d5492" />
+<img width="776" height="353" alt="Screenshot 2026-06-24 170416" src="https://github.com/user-attachments/assets/08fa3928-24e3-4c11-a772-263893fd9aaa" />
 
 The motor is placed on the top with the gear that moves the belt.
 
