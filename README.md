@@ -260,8 +260,6 @@ Height: 15mm
 |-----------|------------|----------------|--------------|------------------|-------|
 |  DC 5V |   15mA   |      40Hz       |   2cm-4m  |    15 degree    |  10µS TTL pulse  |
 
-
-
 [Back to table of contents](#table-of-contents)
 
 ## Gyroscope
