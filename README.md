@@ -200,9 +200,11 @@ For motor driver, we chose the Acebott ESP32, it's capable of controling not onl
 ## Skeleton/Chassis
 ----
 
-This year, instead of making the chassis out of lego, we changed it to 3D printed since it allowed it to be less bulky and lighter unlike the lego version. It also allowed for more complex designs such as in the steering and motor placements, these modifications although harder to add to the robot, it immensely helped the functionality and efficiency of the robot. The model was first made in Tinkercad and later passed to Blender for final touches and took around 2 hours.
+We selected this type of chassis for various reasons including having a lower center of gravity, a greater rigid structure, a broader weight distribution, etc. Its low center of gravity improves balance and reduces the risk of tipping while turning or accelerating which gives a major stability on curves. The structure reduces deformation and helps the precision of the movements and turns. This chassis’s weight distribution gives aside from stability a greater traction on the wheels. Other than these reasons, the compact design allows for better maneuverability in tight spaces, making it easier to navigate the competition field. In addition, the gear transmission system provides efficient power transfer, while the large platform offers enough space for sensors, the battery, and electronic components.
 
 <img width="805" height="569" alt="Screenshot 2026-06-24 171138" src="https://github.com/user-attachments/assets/ddf1334c-914d-48e1-b775-fb9d8ab285f4" />
+
+(Full model is in the "models" repository)
 
 ## Energy management
 ----
