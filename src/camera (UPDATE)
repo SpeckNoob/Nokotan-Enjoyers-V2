@@ -1,0 +1,48 @@
+from machine import UART
+import sensor, image, time
+
+uart = UART(1, baudrate=115200)
+
+sensor.reset()
+sensor.set_pixformat(sensor.RGB565)
+sensor.set_framesize(sensor.QQVGA)  # Baja calidad para más FPS
+sensor.skip_frames(time=2000)
+sensor.set_auto_gain(False)
+sensor.set_auto_whitebal(False)
+
+red_threshold = (30, 100, 15, 127, 15, 127)
+green_threshold = (30, 100, -127, -15, 15, 127)
+
+ultimo_color = ""
+tiempo_ultimo_envio = time.ticks_ms()
+intervalo = 10000  # 10 segundos
+
+while True:
+    img = sensor.snapshot()
+
+    rojos = img.find_blobs([red_threshold], pixels_threshold=100, area_threshold=100, merge=True)
+    verdes = img.find_blobs([green_threshold], pixels_threshold=100, area_threshold=100, merge=True)
+
+    blob_rojo = max(rojos, key=lambda b: b.pixels(), default=None)
+    blob_verde = max(verdes, key=lambda b: b.pixels(), default=None)
+
+    color_detectado = ""
+    if blob_rojo and not blob_verde:
+        color_detectado = "ROJO"
+    elif blob_verde and not blob_rojo:
+        color_detectado = "VERDE"
+    elif blob_rojo and blob_verde:
+        if blob_rojo.pixels() > blob_verde.pixels():
+            color_detectado = "ROJO"
+        else:
+            color_detectado = "VERDE"
+
+    if color_detectado:
+        tiempo_actual = time.ticks_ms()
+        if (color_detectado != ultimo_color) or (time.ticks_diff(tiempo_actual, tiempo_ultimo_envio) > intervalo):
+            uart.write(color_detectado + "\n")
+            print("Color enviado:", color_detectado)
+            ultimo_color = color_detectado
+            tiempo_ultimo_envio = tiempo_actual
+    else:
+        ultimo_color = ""  # Reiniciar si no hay detección
