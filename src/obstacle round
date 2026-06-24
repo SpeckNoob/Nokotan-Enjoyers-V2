@@ -1,0 +1,192 @@
+#include <Wire.h> 
+#include <VL53L1X.h>
+#include <ESP32Servo.h>
+#include "Arduino.h"
+
+// Multiplexores
+#define MUX_LEFT_ADDR  0x70
+#define MUX_RIGHT_ADDR 0x74
+#define MUX_CHANNEL_0  0
+
+// Sensores
+VL53L1X sensorLeft;
+VL53L1X sensorRight;
+
+// Servo Steam
+#define SERVO_PIN 25
+#define SERVO_LEFT     15
+#define SERVO_CENTER   37
+#define SERVO_RIGHT    55
+Servo miServo;
+
+// Motor control con shift register
+#define SHCP_PIN 18
+#define EN_PIN   16
+#define DATA_PIN 5
+#define STCP_PIN 17
+#define PWM1_PIN 19
+int M1_Forward = 128;  // Mitad de velocidad
+
+// Umbral: 100 cm
+#define OBSTACLE_THRESHOLD 1000
+
+// UART1 desde la cámara
+#define UART_RX 3
+#define UART_TX 1
+
+// Flags
+bool enGiroPorColor = false;
+unsigned long tiempoGiroColor = 1000; // 1 segundo
+
+void selectOnlyOneMux(uint8_t muxAddr) {
+  Wire.beginTransmission(MUX_LEFT_ADDR); Wire.write(0x00); Wire.endTransmission();
+  Wire.beginTransmission(MUX_RIGHT_ADDR); Wire.write(0x00); Wire.endTransmission();
+  Wire.beginTransmission(muxAddr); Wire.write(1 << MUX_CHANNEL_0); Wire.endTransmission();
+  delay(10);
+}
+
+void MoveForward() {
+  digitalWrite(EN_PIN, LOW);
+  digitalWrite(STCP_PIN, LOW);
+  shiftOut(DATA_PIN, SHCP_PIN, MSBFIRST, M1_Forward);
+  digitalWrite(STCP_PIN, HIGH);
+  digitalWrite(PWM1_PIN, HIGH);
+}
+
+void StopMotor() {
+  digitalWrite(PWM1_PIN, LOW);
+}
+
+void ejecutarGiroColor(int direccionInicial, int correccionOpuesta) {
+  enGiroPorColor = true;
+
+  StopMotor();
+  delay(100);
+  miServo.write(direccionInicial);
+  delay(tiempoGiroColor);
+  miServo.write(SERVO_CENTER);
+  delay(100);
+
+  // Esperar hasta que el sensor derecho detecte al menos 15 cm
+  while (true) {
+    selectOnlyOneMux(MUX_RIGHT_ADDR);
+    int dist = sensorRight.read();
+    if (sensorRight.timeoutOccurred()) continue;
+
+    if (dist >= 150) break;
+    delay(50);
+  }
+
+  // Corrección
+  miServo.write(correccionOpuesta);
+  delay(tiempoGiroColor);
+  miServo.write(SERVO_CENTER);
+  delay(100);
+
+  MoveForward();
+  enGiroPorColor = false;
+}
+
+void setup() {
+  Serial.begin(115200);
+  Serial1.begin(115200, SERIAL_8N1, UART_RX, UART_TX);  // UART desde la cámara
+
+  Wire.begin();
+
+  // Pines motor
+  pinMode(SHCP_PIN, OUTPUT);
+  pinMode(EN_PIN, OUTPUT);
+  pinMode(DATA_PIN, OUTPUT);
+  pinMode(STCP_PIN, OUTPUT);
+  pinMode(PWM1_PIN, OUTPUT);
+
+  // Servo
+  miServo.setPeriodHertz(50);
+  miServo.attach(SERVO_PIN, 500, 2400);
+  miServo.write(SERVO_CENTER);
+
+  // Sensor izquierdo
+  selectOnlyOneMux(MUX_LEFT_ADDR);
+  sensorLeft.setTimeout(500);
+  if (!sensorLeft.init()) {
+    Serial.println("Error: sensor izquierdo no detectado.");
+    while (1);
+  }
+  sensorLeft.setDistanceMode(VL53L1X::Long);
+  sensorLeft.setMeasurementTimingBudget(20000);
+  sensorLeft.startContinuous(20);
+
+  // Sensor derecho
+  selectOnlyOneMux(MUX_RIGHT_ADDR);
+  sensorRight.setTimeout(500);
+  if (!sensorRight.init()) {
+    Serial.println("Error: sensor derecho no detectado.");
+    while (1);
+  }
+  sensorRight.setDistanceMode(VL53L1X::Long);
+  sensorRight.setMeasurementTimingBudget(50000);
+  sensorRight.startContinuous(50);
+
+  Serial.println("Sistema listo.");
+}
+
+void loop() {
+  // UART desde cámara: color detectado
+  if (Serial1.available() && !enGiroPorColor) {
+    String color = Serial1.readStringUntil('\n');
+    color.trim();
+
+    if (color == "ROJO") {
+      Serial.println("Color ROJO detectado → giro a la derecha");
+      ejecutarGiroColor(SERVO_RIGHT, SERVO_LEFT);
+    }
+    else if (color == "VERDE") {
+      Serial.println("Color VERDE detectado → giro a la izquierda");
+      ejecutarGiroColor(SERVO_LEFT, SERVO_RIGHT);
+    }
+  }
+
+  MoveForward();  // Siempre avanza a media velocidad
+
+  // Lectura sensores de distancia
+  selectOnlyOneMux(MUX_LEFT_ADDR);
+  int distLeft = sensorLeft.read();
+  if (sensorLeft.timeoutOccurred()) {
+    Serial.println("Timeout sensor izquierdo");
+    distLeft = 0;
+  }
+
+  selectOnlyOneMux(MUX_RIGHT_ADDR);
+  int distRight = sensorRight.read();
+  if (sensorRight.timeoutOccurred()) {
+    Serial.println("Timeout sensor derecho");
+    distRight = 0;
+  }
+
+  Serial.print("Izquierdo: "); Serial.print(distLeft);
+  Serial.print(" mm | Derecho: "); Serial.println(distRight);
+
+  if (!enGiroPorColor) {
+    if (distLeft > OBSTACLE_THRESHOLD) {
+      Serial.println("Distancia izquierda > 100 cm → giro a la izquierda");
+      StopMotor();
+      delay(100);
+      miServo.write(SERVO_LEFT);
+      delay(2800);
+      miServo.write(SERVO_CENTER);
+      delay(200);
+      MoveForward();
+    } else if (distRight > OBSTACLE_THRESHOLD) {
+      Serial.println("Distancia derecha > 100 cm → giro a la derecha");
+      StopMotor();
+      delay(100);
+      miServo.write(SERVO_RIGHT);
+      delay(2800);
+      miServo.write(SERVO_CENTER);
+      delay(200);
+      MoveForward();
+    }
+  }
+
+  delay(100);
+}
