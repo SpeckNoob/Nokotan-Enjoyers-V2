@@ -1,0 +1,100 @@
+from machine import UART
+import sensor, image, time
+
+# Configuración de UART para enviar los datos al ESP32
+uart = UART(1, baudrate=115200)
+
+# Inicialización del sensor de la cámara
+sensor.reset()
+sensor.set_pixformat(sensor.RGB565)  # Formato de color RGB
+sensor.set_framesize(sensor.QVGA)  # Resolución más baja para mejorar FPS (320x240)
+sensor.skip_frames(time=2000)  # Esperar 2 segundos para estabilizar la cámara
+sensor.set_auto_gain(False)  # Desactivar ganancia automática para controlar la exposición
+sensor.set_auto_whitebal(False)  # Desactivar balance de blancos automático
+
+# Umbrales ajustados para evitar la confusión con naranja
+red_threshold = (30, 100, 15, 127, 15, 127)  # Umbral rojo más restringido
+green_threshold = (30, 100, -127, -15, 15, 127)  # Umbral verde
+
+# Variables para controlar el envío de datos
+ultimo_color = ""
+tiempo_ultimo_envio = time.ticks_ms()
+intervalo = 10000  # Intervalo de 10 segundos entre envíos de color
+
+# Función para ajustar la exposición y mejorar la detección bajo diferentes condiciones de luz
+def ajustar_iluminacion():
+    img = sensor.snapshot()
+    promedio = 0
+    for pixel in img:
+        promedio += pixel[0]  # Tomar un valor de la componente R (Rojo)
+    promedio = promedio // (img.width() * img.height())  # Promedio de la imagen
+
+    # Ajustar la ganancia en función de la iluminación
+    if promedio < 100:  # Condición de poca luz
+        sensor.set_auto_gain(True)
+    else:
+        sensor.set_auto_gain(False)
+
+# Función para detectar los colores usando find_blobs (más eficiente)
+def detectar_color_blobs(img):
+    # Limitar la región a los 3/4 superiores de la imagen (evitar la franja en el piso)
+    region_superior = (0, 0, img.width(), img.height() // 2)  # Usar solo la mitad superior de la imagen
+
+    rojos = img.find_blobs([red_threshold], pixels_threshold=100, area_threshold=100, merge=True, roi=region_superior)
+    verdes = img.find_blobs([green_threshold], pixels_threshold=100, area_threshold=100, merge=True, roi=region_superior)
+    return rojos, verdes
+
+# Función para obtener el blob más cercano
+def obtener_blob_mas_cercano(rojos, verdes):
+    # Verificar que haya blobs en ambos colores
+    if not rojos and not verdes:
+        return None, None
+
+    # Encontrar el blob más cercano (el que tiene el valor de 'y' más bajo)
+    rojo_cercano = min(rojos, key=lambda b: b[1], default=None)  # Minimo valor de 'y' para los rojos
+    verde_cercano = min(verdes, key=lambda b: b[1], default=None)  # Minimo valor de 'y' para los verdes
+
+    # Comparar cuál de los dos colores está más cerca
+    if rojo_cercano and verde_cercano:
+        if rojo_cercano[1] < verde_cercano[1]:  # Si el rojo está más cerca
+            return "ROJO", rojo_cercano
+        else:  # Si el verde está más cerca
+            return "VERDE", verde_cercano
+    elif rojo_cercano:  # Si solo se detecta rojo
+        return "ROJO", rojo_cercano
+    elif verde_cercano:  # Si solo se detecta verde
+        return "VERDE", verde_cercano
+    return None, None
+
+while True:
+    # Ajustar la iluminación según el entorno
+    ajustar_iluminacion()
+
+    # Capturar una nueva imagen
+    img = sensor.snapshot()
+
+    # Detectar rojo y verde usando blobs (más eficiente)
+    rojos, verdes = detectar_color_blobs(img)
+
+    # Filtrar los blobs para encontrar los que tengan un tamaño adecuado (aproximadamente 10 cm de alto)
+    rojos_validos = [blob for blob in rojos if blob[3] >= 10]  # Filtrar bloques que sean al menos 10 píxeles de alto
+    verdes_validos = [blob for blob in verdes if blob[3] >= 10]  # Filtrar bloques que sean al menos 10 píxeles de alto
+
+    # Obtener el blob más cercano
+    color_detectado, blob_detectado = obtener_blob_mas_cercano(rojos_validos, verdes_validos)
+
+    # Si se ha detectado un color, dibujar el marco y enviar el color
+    if color_detectado and blob_detectado:
+        # Dibujar un rectángulo alrededor del blob más cercano
+        img.draw_rectangle(blob_detectado[0], blob_detectado[1], blob_detectado[2], blob_detectado[3], color=(255, 0, 0))  # Rojo
+        img.draw_string(blob_detectado[0], blob_detectado[1] - 10, color_detectado, color=(255, 0, 0))  # Etiqueta con el color
+
+        # Enviar el color detectado si ha cambiado o si ha pasado el intervalo de tiempo
+        tiempo_actual = time.ticks_ms()
+        if (color_detectado != ultimo_color) or (time.ticks_diff(tiempo_actual, tiempo_ultimo_envio) > intervalo):
+            uart.write(color_detectado + "\n")  # Enviar el color por UART
+            print("Color enviado:", color_detectado)
+            ultimo_color = color_detectado
+            tiempo_ultimo_envio = tiempo_actual
+    else:
+        ultimo_color = ""  # Reiniciar si no se detecta ningún color
