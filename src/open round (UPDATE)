@@ -1,0 +1,158 @@
+Ronda abierta
+#include <Wire.h>
+#include <VL53L1X.h>
+#include <ESP32Servo.h>
+#include "Arduino.h"
+
+// Multiplexores
+#define MUX_LEFT_ADDR  0x70
+#define MUX_RIGHT_ADDR 0x74
+#define MUX_CHANNEL_0  0
+
+// Sensores
+VL53L1X sensorLeft;
+VL53L1X sensorRight;
+
+// Servo Steam
+#define SERVO_PIN 25
+#define SERVO_LEFT     15
+#define SERVO_CENTER   37
+#define SERVO_RIGHT    55
+Servo miServo;
+
+// Motor control con shift register
+#define SHCP_PIN 18
+#define EN_PIN   16
+#define DATA_PIN 5
+#define STCP_PIN 17
+#define PWM1_PIN 19
+int M1_Forward = 128;
+
+// Umbral: 1000 mm
+#define OBSTACLE_THRESHOLD 1000
+
+int contadorGiros = 0;
+bool detenido = false;
+unsigned long tiempoInicioRecta = 0;
+
+void selectOnlyOneMux(uint8_t muxAddr) {
+  Wire.beginTransmission(MUX_LEFT_ADDR); Wire.write(0x00); Wire.endTransmission();
+  Wire.beginTransmission(MUX_RIGHT_ADDR); Wire.write(0x00); Wire.endTransmission();
+  Wire.beginTransmission(muxAddr); Wire.write(1 << MUX_CHANNEL_0); Wire.endTransmission();
+  delay(2);
+}
+
+void MoveForward() {
+  digitalWrite(EN_PIN, LOW);
+  digitalWrite(STCP_PIN, LOW);
+  shiftOut(DATA_PIN, SHCP_PIN, MSBFIRST, M1_Forward);
+  digitalWrite(STCP_PIN, HIGH);
+  digitalWrite(PWM1_PIN, HIGH);
+}
+
+void StopMotor() {
+  digitalWrite(PWM1_PIN, LOW);
+}
+
+int lecturaFiltrada(VL53L1X &sensor, uint8_t muxAddr, unsigned long referencia) {
+  selectOnlyOneMux(muxAddr);
+  int lectura = sensor.read();
+  if (lectura <= 0) return 0;
+  if ((millis() - referencia < 1800) && lectura > OBSTACLE_THRESHOLD) return 0;
+  return lectura;
+}
+
+void setup() {
+  Serial.begin(115200);
+  Wire.begin();
+
+  // Pines motor
+  pinMode(SHCP_PIN, OUTPUT);
+  pinMode(EN_PIN, OUTPUT);
+  pinMode(DATA_PIN, OUTPUT);
+  pinMode(STCP_PIN, OUTPUT);
+  pinMode(PWM1_PIN, OUTPUT);
+
+  // Servo
+  miServo.setPeriodHertz(50);
+  miServo.attach(SERVO_PIN, 500, 2400);
+  miServo.write(SERVO_CENTER);
+
+  // Sensor izquierdo
+  selectOnlyOneMux(MUX_LEFT_ADDR);
+  sensorLeft.setTimeout(250);
+  sensorLeft.init();
+  sensorLeft.setDistanceMode(VL53L1X::Long);
+  sensorLeft.setMeasurementTimingBudget(33000);
+  sensorLeft.startContinuous(33);
+
+  // Sensor derecho
+  selectOnlyOneMux(MUX_RIGHT_ADDR);
+  sensorRight.setTimeout(250);
+  sensorRight.init();
+  sensorRight.setDistanceMode(VL53L1X::Long);
+  sensorRight.setMeasurementTimingBudget(33000);
+  sensorRight.startContinuous(33);
+
+  tiempoInicioRecta = millis();
+  Serial.println("Sistema listo.");
+}
+
+void loop() {
+  if (detenido) return;
+
+  int distLeft = lecturaFiltrada(sensorLeft, MUX_LEFT_ADDR, tiempoInicioRecta);
+  int distRight = lecturaFiltrada(sensorRight, MUX_RIGHT_ADDR, tiempoInicioRecta);
+
+  Serial.print("Izquierdo: "); Serial.print(distLeft); Serial.print(" mm | ");
+  Serial.print("Derecho: "); Serial.println(distRight);
+
+  bool giroRealizado = false;
+
+  if (distLeft > OBSTACLE_THRESHOLD) {
+    Serial.println("→ Gira a la izquierda");
+    StopMotor();
+    delay(100);
+    miServo.write(SERVO_LEFT);
+    delay(2800);
+    miServo.write(SERVO_CENTER);
+    delay(150);
+    MoveForward();
+    contadorGiros++;
+    tiempoInicioRecta = millis();  // Reinicia tiempo de filtro
+    giroRealizado = true;
+  }
+
+  if (distRight > OBSTACLE_THRESHOLD) {
+    Serial.println("→ Gira a la derecha");
+    StopMotor();
+    delay(100);
+    miServo.write(SERVO_RIGHT);
+    delay(2800);
+    miServo.write(SERVO_CENTER);
+    delay(150);
+    MoveForward();
+    contadorGiros++;
+    tiempoInicioRecta = millis();  // Reinicia tiempo de filtro
+    giroRealizado = true;
+  }
+
+  if (!giroRealizado) {
+    MoveForward();
+  }
+
+  if (contadorGiros >= 12) {
+    Serial.println("✔ 12 giros completados. Avanzando y deteniendo...");
+    MoveForward();
+    delay(1000);
+    StopMotor();
+    miServo.write(SERVO_CENTER);
+    digitalWrite(STCP_PIN, LOW);
+    shiftOut(DATA_PIN, SHCP_PIN, MSBFIRST, 0x00);
+    digitalWrite(STCP_PIN, HIGH);
+    digitalWrite(PWM1_PIN, LOW);
+    detenido = true;
+  }
+
+  delay(60);  // Lecturas rápidas
+}
