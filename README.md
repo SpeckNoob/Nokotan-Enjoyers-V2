@@ -39,17 +39,17 @@ Table of contents
 
 Mark Chen, Age: 17
 
-![image](https://github.com/user-attachments/assets/263bca30-1d4f-4f59-a675-890829c32520)
+<img width="640" height="640" alt="image" src="https://github.com/user-attachments/assets/075b11e6-feeb-44ca-a446-b1c921a0b356" />
 
 School: Panamerican School of Panama, PAS
 
-Hi!, I'm Mark from Panama with Chinese origin born in February 8 2009. I've been participating in WRO since 2022 and this is my second year participating in the Future Engineers category. I enjoy playing piano and I am a part of a school band, other hobbies include cubing (Rubik's cube competitions), gaming, drawing and volleyball.
+Hi!, I'm Mark from Panama with Chinese origin born in February 8 2009. I've been participating in WRO since 2022 and this is my second year participating in the Future Engineers category. I enjoy playing piano and I am a part of a school band, other hobbies include cubing (Rubik's cube competitions), gaming and volleyball.
 
 ----
 
 Juan Pablo Gomez, Age: 17
 
-![image](https://github.com/user-attachments/assets/b9244ac9-54e1-4af8-89d1-042ac478571a)
+<img width="640" height="640" alt="image" src="https://github.com/user-attachments/assets/aef35fea-69bd-471d-aa1f-f56b64cd978f" />
 
 School: Panamerican School of Panama, PAS
 
@@ -59,7 +59,7 @@ Hi, I'm Juan Pablo, from Colombia. I love robotics. I've been working with robot
 
 Julio Chong, Age: 17
 
-![image](https://github.com/user-attachments/assets/39dfb391-f71d-4759-b822-fce67cd3f061)
+<img width="640" height="640" alt="image" src="https://github.com/user-attachments/assets/f84e0364-83dc-4d82-bf44-c7314764439f" />
 
 School: Panamerican School of Panama, PAS
 
