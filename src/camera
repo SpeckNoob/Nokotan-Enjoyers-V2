@@ -1,0 +1,45 @@
+
+from machine import UART
+import sensor
+import image
+import time
+
+UART a ESP32 (TX en P4)
+uart = UART(1, baudrate=115200)
+
+Configuración de la cámara
+sensor.reset()
+sensor.set_pixformat(sensor.RGB565)
+sensor.set_framesize(sensor.HD720)
+sensor.skip_frames(time=2000)
+sensor.set_auto_gain(False)
+sensor.set_auto_whitebal(False)
+
+Umbrales
+red_threshold = (30, 100, 15, 127, 15, 127)
+green_threshold = (30, 100, -127, -15, 15, 127)
+
+clock = time.clock()
+
+while True:
+    clock.tick()
+    img = sensor.snapshot()
+
+    # Detectar rojo (máximo 1)
+    rojos = img.find_blobs([red_threshold], pixels_threshold=200, area_threshold=200, merge=True)
+    verdes = img.find_blobs([green_threshold], pixels_threshold=200, area_threshold=200, merge=True)
+
+    if len(rojos) > 0:
+        blob = rojos[0]
+        img.draw_rectangle(blob.rect(), color=(255, 0, 0))
+        img.draw_cross(blob.cx(), blob.cy(), color=(255, 0, 0))
+        uart.write("ROJO\n")
+        print("ROJO")
+    elif len(verdes) > 0:
+        blob = verdes[0]
+        img.draw_rectangle(blob.rect(), color=(0, 255, 0))
+        img.draw_cross(blob.cx(), blob.cy(), color=(0, 255, 0))
+        uart.write("VERDE\n")
+        print("VERDE")
+
+    time.sleep_ms(300)  # Da tiempo al ESP32 a leer sin saturarse
