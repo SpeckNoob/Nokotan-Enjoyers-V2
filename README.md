@@ -153,10 +153,13 @@ The GA12-N20 motor is a solid option for robots because it offers an excellent b
 
 The motor works by converting electrical energy into mechanical energy, specifically rotational motion, through the interaction of magnetic fields. It uses the principle that a current-carrying conductor experiences a force within a magnetic field. This force causes a rotor to spin, which then drives a shaft, producing mechanical work. This is then connected to the wheels with two jammed axles.
 
-To connect the motor to the skeleton, we made an opening in the skeleton to fit the motor inside, then we held it up with a 3D printed piece directly attached to the car with screws.
+To connect the motor to the skeleton, we made a piece that holds the motor in place and its directly attached to the main body with the use of screws.
 
 
-<img width="592" height="346" alt="image" src="https://github.com/user-attachments/assets/2fe7c915-60aa-48d5-8ed1-5410b5651c7b" />
+
+
+
+
 
 (Full model is in the "models" repository)
 
