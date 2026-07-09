@@ -72,7 +72,7 @@ Ivan Guerrero (Coach), Age: 27
 
 School: Panamerican School of Panama, PAS
 
-
+Soy Iván Guerrero, entrenador del equipo Mustang Mimic; nacido el 22 de febrero del 2000, en Venezuela. Estoy involucrado en el ámbito de la robótica desde 2018 en proyectos de investigación durante mi carrera de ingeniería mecánica en la Universidad Tecnológica de Panamá, también siendo parte del equipo Jueces en la WRO. Tengo afición al senderismo y la música.
 
 ----
 
