@@ -154,7 +154,7 @@ The GA12-N20 motor is a solid option for robots because it offers an excellent b
 
 The motor works by converting electrical energy into mechanical energy, specifically rotational motion, through the interaction of magnetic fields. It uses the principle that a current-carrying conductor experiences a force within a magnetic field. This force causes a rotor to spin, which then drives a shaft, producing mechanical work. This is then connected to the wheels with two jammed axles.
 
-To connect the motor to the skeleton, we made a piece that holds the motor in place and its directly attached to the main body with the use of screws.
+To connect the motor to the skeleton, we made an opening in the skeleton to fit the motor inside, then we held it up with screws.
 
 <img width="400" height="600" alt="image" src="https://github.com/user-attachments/assets/16ea506e-7c31-4eee-9259-efbd8307ebd5" />
 
@@ -164,7 +164,9 @@ To connect the motor to the skeleton, we made a piece that holds the motor in pl
 ----
 We experimented with many steering mechanisms but the one we found most success was a belt and gear system. Last year we tried an Anti-Ackerman system which worked but not with the model we made. This year we desided to use a simpler belt and gear design that fit our car the best, although it's not as efficient as other systems like the Ackerman, this one still provides great steering angle and consistency.
 
-<img width="400" height="600" alt="image" src="https://github.com/user-attachments/assets/c652f65a-35a9-440e-bed3-84faa907cef4" />
+<img width="612" height="816" alt="67081" src="https://github.com/user-attachments/assets/acf185fe-e0d3-4b63-b50f-95d35228476b" />
+
+<img width="612" height="816" alt="67080" src="https://github.com/user-attachments/assets/bbfbf12d-c585-4f6a-8770-1f6fbed5159d" />
 
 ## Servo motor:
 ----
