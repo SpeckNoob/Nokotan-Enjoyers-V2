@@ -156,17 +156,15 @@ The motor works by converting electrical energy into mechanical energy, specific
 
 To connect the motor to the skeleton, we made an opening in the skeleton to fit the motor inside, then we held it up with screws.
 
-<img width="400" height="600" alt="image" src="https://github.com/user-attachments/assets/16ea506e-7c31-4eee-9259-efbd8307ebd5" />
+<img width="612" height="816" alt="67081" src="https://github.com/user-attachments/assets/acf185fe-e0d3-4b63-b50f-95d35228476b" />
+
+<img width="612" height="816" alt="67080" src="https://github.com/user-attachments/assets/bbfbf12d-c585-4f6a-8770-1f6fbed5159d" />
 
 (Full model is in the "models" repository)
 
 ## Steering
 ----
-We experimented with many steering mechanisms but the one we found most success was a belt and gear system. Last year we tried an Anti-Ackerman system which worked but not with the model we made. This year we desided to use a simpler belt and gear design that fit our car the best, although it's not as efficient as other systems like the Ackerman, this one still provides great steering angle and consistency.
-
-<img width="612" height="816" alt="67081" src="https://github.com/user-attachments/assets/acf185fe-e0d3-4b63-b50f-95d35228476b" />
-
-<img width="612" height="816" alt="67080" src="https://github.com/user-attachments/assets/bbfbf12d-c585-4f6a-8770-1f6fbed5159d" />
+We experimented with many steering mechanisms but the one we found most successful was anti-Ackerman steering. Other methods were either too big and complex or didn't turn the right amount. Anti-Ackerman systems are usually used on racing cars where the vehicles must turn at high speeds and the tires might slip, the outer tire’s increased steering angle helps compensate for these slip angles, maximizing grip during high-speed  cornering. Even though with this robot we can't reach those speeds where the wheels start slipping, the anti-Ackerman system is still the most effective and simple for this competition.
 
 ## Servo motor:
 ----
