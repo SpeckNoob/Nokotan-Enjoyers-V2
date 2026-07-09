@@ -255,7 +255,7 @@ The sensors are held up with custom 3D printed pieces that attach to the car dir
 ## Gyroscope
 ----
 
-This year`s robot we decided on using the GY-521 MPU-6050 to help the robot mantain an striaght position throught the circuit. THe MPU-6050 also help us measure the orientation and turns to let know our robot how much it have ben turning, for example measuring the real amount of turn and stop it when it reaches to 90 degrees.
+This year`s robot we decided on using the GY-521 MPU-6050 to help the robot maintain a straight position throughout the circuit. THe MPU-6050 also helps us measure the orientation and turns to let our robot know how much it has been turning, for example measuring the real amount of turn and stopping it when it reaches 90 degrees.
 
 <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/a5f557f7-2aba-4975-8723-9899900cb17b" />
 
