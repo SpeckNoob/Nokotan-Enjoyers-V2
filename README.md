@@ -132,25 +132,15 @@ The robot operates with multiple motors and sensors which will be showcased here
 ----
 The robot uses motors for drving and steering, these components work together to ensure the robot has a smooth and efficient movement.
 
+<img width="800" height="800" alt="image" src="https://github.com/user-attachments/assets/1b3aad92-9b31-4a88-9d41-62e4cbcc2b5a" />
 
-<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/01dc2d8e-d34d-4b76-b05e-223f4daa5682" />
+|  Voltage |   Current  |   rpm    |  Torque  |
+|----------|------------|----------|----------|
+|    3     |    160     |   120    |   0.45   |
+|    6     |    220     |   200    |    1.0   |
+|   7.2    |    250     |   250    |    1.5   |
 
-
-|  Voltage |   Rated Current   |   Stall Current    |    Total Length    |  Gearbox Size  |  Weight  |
-|----------|-----------------|------------------|--------------|------------------|-----------------|
-|  6V~12V |   0.04 A   |        0.67 A       |   34mm   | 15mm x 12mm x 10mm (LxWxH)|  10g  |
-
-The GA12-N20 motor is a solid option for robots because it offers an excellent balance of compact size, torque, efficiency, and affordability. Its built-in gearbox allows the small motor to produce enough force to move robots much heavier than its size would suggest.
-
-|  RPM |  Torque MAX (Kg.mm) |  Torque STALLED (Kg.mm) |
-|----------|------------|----------|
-|    6V@100     |    3.4      |   17    |
-|    12V@200      |         |       |
-|    6V@200     |    1.9     |   9.4   |
-|    12V@400      |         |       |
-|    6V@450     |    1.2     |   5.4    |
-|    12V@900      |         |       |
-
+We chose this motor because it was viable and the one we had already, other motors we used didn't hold up or didn't have enough power to move the wheels. Although there are way better motors we could've bought, we chose this one for its dual motor and it didn't need a driving axle. This made the building process a bit easier and less complicated.
 
 The motor works by converting electrical energy into mechanical energy, specifically rotational motion, through the interaction of magnetic fields. It uses the principle that a current-carrying conductor experiences a force within a magnetic field. This force causes a rotor to spin, which then drives a shaft, producing mechanical work. This is then connected to the wheels with two jammed axles.
 
