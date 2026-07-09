@@ -254,7 +254,7 @@ Height: 15mm
 
 The sensors are held up with custom 3D printed pieces that attach to the car directly using screws.
 
-
+<img width="283" height="213" alt="image" src="https://github.com/user-attachments/assets/91dd3a0b-38a5-4670-92f1-daac950fa697" />
 
 [Back to table of contents](#table-of-contents)
 
