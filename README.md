@@ -156,6 +156,11 @@ To connect the motor to the skeleton, we made an opening in the skeleton to fit 
 ----
 We experimented with many steering mechanisms but the one we found most successful was anti-Ackerman steering. Other methods were either too big and complex or didn't turn the right amount. Anti-Ackerman systems are usually used on racing cars where the vehicles must turn at high speeds and the tires might slip, the outer tire’s increased steering angle helps compensate for these slip angles, maximizing grip during high-speed  cornering. Even though with this robot we can't reach those speeds where the wheels start slipping, the anti-Ackerman system is still the most effective and simple for this competition.
 
+<img width="366" height="271" alt="image" src="https://github.com/user-attachments/assets/89bb7247-c711-4cfe-9367-7f9feab796e0" />
+
+The steering system is composed of two identical wheel holders connected with two steering axles, these two axles are then connected to the servo motor in the middle.
+
+
 ## Servo motor:
 ----
 
@@ -174,6 +179,7 @@ The MG90S micro servo motor is a good choice for robots because it provides accu
 |  Dead Band |   5µs  |
 
 
+
 ## Motherboard
 ----
 
@@ -190,7 +196,7 @@ For motor driver, we chose the Acebott ESP32, it's capable of controling not onl
 
 We selected this type of chassis for various reasons including having a lower center of gravity, a greater rigid structure, a broader weight distribution, etc. Its low center of gravity improves balance and reduces the risk of tipping while turning or accelerating which gives a major stability on curves. The structure reduces deformation and helps the precision of the movements and turns. This chassis’s weight distribution gives aside from stability a greater traction on the wheels. Other than these reasons, the compact design allows for better maneuverability in tight spaces, making it easier to navigate the competition field. In addition, the gear transmission system provides efficient power transfer, while the large platform offers enough space for sensors, the battery, and electronic components.
 
-<img width="805" height="569" alt="Screenshot 2026-06-24 171138" src="https://github.com/user-attachments/assets/ddf1334c-914d-48e1-b775-fb9d8ab285f4" />
+<img width="449" height="311" alt="image" src="https://github.com/user-attachments/assets/30519295-474d-4df0-93ad-8d8fc5434c78" />
 
 (Full model is in the "models" repository)
 
