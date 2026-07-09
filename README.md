@@ -228,7 +228,7 @@ Dimentions:
 
 ## Ultrasonic Sensor
 ----
-This year`s robot we changed from laser based distance sensor to the HC-SR04 ultrasonic sensor , this is because last year we  noticed that the black walls around the circuit were absorbing the laser, thus making very difficult to have precise information. This time we used 6 ultrasonic sensors to support our camera:s vision and prevent any minute detail, for example an insufficient turning angle, that could encounter our robot wich it could lead to it crash onto an obstacle. The position goes by: 1 on each side, 1 looking at angle of 45 degrees, 1 looking at angle of 135 degrees and finally 2 on the front of the car.
+This year`s robot we changed from laser based distance sensor to the HC-SR04 ultrasonic sensor , this is because last year we  noticed that the black walls around the circuit were absorbing the laser, thus making it very difficult to have precise information. This time we used 6 ultrasonic sensors to support our camera:s vision and prevent any minute detail, for example an insufficient turning angle, that could encounter our robot which could lead to it crash onto an obstacle. The position goes by: 1 on each side, 1 looking at an angle of 45 degrees, 1 looking at an angle of 135 degrees and finally 2 on the front of the car.
 
 <img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/9fc3dc68-5ad6-443c-904b-1b902a001cad" />
 
@@ -245,6 +245,10 @@ Height: 15mm
 |  Working Voltage |   Working Current   |  Working Frequency   |    Range    |  Measuring Angle  |  Trigger Input Signal  |
 |-----------|------------|----------------|--------------|------------------|-------|
 |  DC 5V |   15mA   |      40Hz       |   2cm-4m  |    15 degree    |  10µS TTL pulse  |
+
+The sensors are held up with custom 3D printed pieces that attach to the car directly using screws.
+
+
 
 [Back to table of contents](#table-of-contents)
 
