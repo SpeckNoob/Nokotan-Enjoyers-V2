@@ -173,9 +173,6 @@ The MG90S micro servo motor is a good choice for robots because it provides accu
 |  Speed (6V) |   0.08s/60 degree   |
 |  Dead Band |   5µs  |
 
-<img width="776" height="353" alt="Screenshot 2026-06-24 170416" src="https://github.com/user-attachments/assets/08fa3928-24e3-4c11-a772-263893fd9aaa" />
-
-The motor is placed on the top with the gear that moves the belt.
 
 ## Motherboard
 ----
