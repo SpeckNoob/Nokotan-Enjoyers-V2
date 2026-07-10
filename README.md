@@ -69,6 +69,7 @@ My name is Julio Chong, a panamenian teen with chinese antescedents who was born
 
 Ivan Guerrero (Coach), Age: 27
 
+<img width="640" height="640" alt="image" src="https://github.com/user-attachments/assets/fa3d63a0-7490-4481-b780-66280a367abf" />
 
 School: Panamerican School of Panama, PAS
 
