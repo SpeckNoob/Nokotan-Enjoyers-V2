@@ -106,15 +106,15 @@ Points are awarded based on the performance of the robot. In the first round, po
 
 | Top | Bottom |
 |--------|---------|
-| Insert Image | Insert Image |
+| <img width="1599" height="899" alt="WhatsApp Image 2026-07-09 at 6 32 43 PM" src="https://github.com/user-attachments/assets/e22d6fa3-d576-419c-91e2-6cf0b37a11b3" /> | <img width="1599" height="899" alt="image" src="https://github.com/user-attachments/assets/566ea292-6584-48a6-9b05-912e41323fc2" /> |
 
 | Left | Right |
 |--------|---------|
-| Insert Image  | Insert Image  |
+| <img width="1599" height="899" alt="image" src="https://github.com/user-attachments/assets/a40ca625-841b-470a-a54f-bf961085db8e" /> | <img width="1599" height="899" alt="image" src="https://github.com/user-attachments/assets/a627247c-c619-4a0d-b4f3-0c1390741c76" /> |
 
 | Front | Back |
 |--------|---------|
-| Insert Image  | Insert Image  |
+| <img width="1599" height="899" alt="image" src="https://github.com/user-attachments/assets/74d52917-dc75-4046-9733-f4bb5ff0bdb5" /> | <img width="1599" height="899" alt="image" src="https://github.com/user-attachments/assets/8ae70a51-bdc2-47a9-b464-bede737c74a9" /> |
 
 
 ## Video
